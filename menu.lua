@@ -230,10 +230,15 @@ local function undockShip()
     return true
 end
 
--- Bulk cargo functions (using correct repository) - FIXED
+-- Bulk cargo functions (using correct repository)
 local function loadBulkPortA()
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/miniaviation/bulk/refs/heads/main/load%20in%20newport.lua"))()
+        local scriptContent = game:HttpGet("https://raw.githubusercontent.com/miniaviation/bulk/refs/heads/main/load%20in%20newport.lua")
+        local scriptFunc, loadErr = loadstring(scriptContent)
+        if not scriptFunc then
+            error("loadstring failed: " .. tostring(loadErr))
+        end
+        scriptFunc()
     end)
     if not success then
         warn("Failed to load bulk at Port A: " .. tostring(err))
@@ -244,7 +249,12 @@ end
 
 local function loadBulkPortB()
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/Load%20in%20ocean%20port.lua"))()
+        local scriptContent = game:HttpGet("https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/Load%20in%20ocean%20port.lua")
+        local scriptFunc, loadErr = loadstring(scriptContent)
+        if not scriptFunc then
+            error("loadstring failed: " .. tostring(loadErr))
+        end
+        scriptFunc()
     end)
     if not success then
         warn("Failed to load bulk at Port B: " .. tostring(err))
@@ -255,7 +265,12 @@ end
 
 local function unloadBulkAnyPort()
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/miniaviation/bulk/refs/heads/main/unload.lua"))()
+        local scriptContent = game:HttpGet("https://raw.githubusercontent.com/miniaviation/bulk/refs/heads/main/unload.lua")
+        local scriptFunc, loadErr = loadstring(scriptContent)
+        if not scriptFunc then
+            error("loadstring failed: " .. tostring(loadErr))
+        end
+        scriptFunc()
     end)
     if not success then
         warn("Failed to unload bulk: " .. tostring(err))
@@ -264,10 +279,15 @@ local function unloadBulkAnyPort()
     return true
 end
 
--- Container cargo functions - FIXED
+-- Container cargo functions
 local function loadContainerPortA()
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/load%20in%20stanley%20container.lua"))()
+        local scriptContent = game:HttpGet("https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/load%20in%20stanley%20container.lua")
+        local scriptFunc, loadErr = loadstring(scriptContent)
+        if not scriptFunc then
+            error("loadstring failed: " .. tostring(loadErr))
+        end
+        scriptFunc()
     end)
     if not success then
         warn("Failed to load container at Port A: " .. tostring(err))
@@ -278,7 +298,12 @@ end
 
 local function loadContainerPortB()
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/load%20in%20norkfork%20container.lua"))()
+        local scriptContent = game:HttpGet("https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/load%20in%20norkfork%20container.lua")
+        local scriptFunc, loadErr = loadstring(scriptContent)
+        if not scriptFunc then
+            error("loadstring failed: " .. tostring(loadErr))
+        end
+        scriptFunc()
     end)
     if not success then
         warn("Failed to load container at Port B: " .. tostring(err))
@@ -289,7 +314,12 @@ end
 
 local function unloadContainerAnyPort()
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/miniaviation/shipping-lane/refs/heads/main/unload.lua"))()
+        local scriptContent = game:HttpGet("https://raw.githubusercontent.com/miniaviation/shipping-lane/refs/heads/main/unload.lua")
+        local scriptFunc, loadErr = loadstring(scriptContent)
+        if not scriptFunc then
+            error("loadstring failed: " .. tostring(loadErr))
+        end
+        scriptFunc()
     end)
     if not success then
         warn("Failed to unload container: " .. tostring(err))
@@ -298,10 +328,14 @@ local function unloadContainerAnyPort()
     return true
 end
 
--- === OIL CARGO: LOAD FROM GITHUB - FIXED ===
+-- === OIL CARGO: LOAD FROM GITHUB ===
 local function loadOilScript()
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/oil.lua"))()
+        local url = "https://raw.githubusercontent.com/miniaviation/resturant/refs/heads/main/oil.lua"
+        local scriptContent = game:HttpGet(url)
+        local func, loadErr = loadstring(scriptContent)
+        if not func then error("Oil script loadstring failed: " .. tostring(loadErr)) end
+        spawn(func) -- Run in isolated thread
         _G.oilScriptLoaded = true
         warn("Oil autofarm script loaded and running from GitHub!")
     end)
@@ -333,7 +367,7 @@ spawn(function()
                     while _G.test do
                         warn("Starting cycle for cargo type: " .. _G.cargoType)
                         tweenToDock(dockPosition)
-                        task.wait(2)
+                        task.wait(5)
                         if not dockShip() then
                             warn("Failed to dock ship at Port A")
                         end
